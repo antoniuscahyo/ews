@@ -43,7 +43,7 @@
 										</center>
 									</td>	
 									<td>
-										<button onclick="beritanggapan()" class="btn btn-sm btn-primary" data-toggle="tooltip" data-placement="bottom" title="Beri Tanggapan"><i class="fa fa-edit"> Beri Tanggapan</i> </button>
+										<button onclick="diterima()" class="btn btn-sm btn-primary" data-toggle="tooltip" data-placement="bottom" title="Klik Untuk Menerima Pengaduan"><i class="fa fa-edit"> Diterima </i> </button>
 									</td>
 								</tr>
 								<tr>
@@ -67,7 +67,7 @@
 										<div id="status">
 											<label style="font-weight: 800;color: #3276b1;">DI TERIMA</label>
 										</div>
-										<button onclick="updatetanggapan()" class="btn btn-sm btn-warning" data-toggle="tooltip" data-placement="bottom" title="Beri Tanggapan"><i class="fa fa-edit"> Update Tanggapan</i> </button>
+										<button onclick="proses()" class="btn btn-sm btn-warning" data-toggle="tooltip" data-placement="bottom" title="Proses"><i class="fa fa-edit"> Proses</i> </button>
 									</td>
 								</tr>
 								<tr>
@@ -91,7 +91,7 @@
 										<div id="status">
 											<label style="font-weight: 800;color: #b98822;">DI PROSES</label>
 										</div>
-										<button onclick="updatetanggapan()" class="btn btn-sm btn-warning" data-toggle="tooltip" data-placement="bottom" title="Beri Tanggapan"><i class="fa fa-edit"> Update Tanggapan</i> </button>
+										<button onclick="selesai()" class="btn btn-sm btn-success" data-toggle="tooltip" data-placement="bottom" title="Selesai"><i class="fa fa-check"> Selesai</i> </button>
 									</td>
 								</tr>
 								<tr>
@@ -209,8 +209,8 @@
 </div>
 <!-- Modal detail barang -->
 
-<!-- Modal tanggapan -->
-<div class="modal fade" id="modal_beritanggapan" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+<!-- Modal proses -->
+<div class="modal fade" id="modal_proses" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-keyboard="false" data-backdrop="static">
 	<div class="modal-dialog modal-md">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -218,7 +218,7 @@
 					&times;
 				</button>
 				<h4 class="modal-title">
-					Form Beri Tanggapan
+					Form Proses
 				</h4>
 			</div>
 			<div class="modal-body no-padding">
@@ -229,25 +229,7 @@
 						<div class="row">
 							<section class="col col-3">
 								<label > 
-									Status Tanggapan										
-								</label>
-							</section>
-							<section class="col col-9">
-								<label class="select">
-									<select class="select2" name="status_tanggapan" id="status_tanggapan">
-										<option value="">== Pilih Status ==</option>
-										<option value="1">Diterima</option>
-										<option value="2">Proses</option>
-										<option value="3">Selesai</option>
-									</select>
-								</label>
-							</section>									
-						</div>
-
-						<div class="row">
-							<section class="col col-3">
-								<label > 
-									Keterangan Tanggapan								
+									Keterangan Tanggapan Proses								
 								</label>
 							</section>
 							<section class="col col-9">
@@ -302,7 +284,84 @@
 		</div><!-- /.modal-content -->
 	</div><!-- /.modal-dialog -->
 </div>
-<!-- Modal tanggapan -->
+<!-- Modal proses -->
+
+<!-- Modal Selesai -->
+<div class="modal fade" id="modal_selesai" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+	<div class="modal-dialog modal-md">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+					&times;
+				</button>
+				<h4 class="modal-title">
+					Form Selesai
+				</h4>
+			</div>
+			<div class="modal-body no-padding">
+
+				<form id="form-data" class="smart-form">
+					<fieldset style="padding-top: 15px !important;">
+
+						<div class="row">
+							<section class="col col-3">
+								<label > 
+									Keterangan Tanggapan Selesai								
+								</label>
+							</section>
+							<section class="col col-9">
+								<label class="input">
+									<textarea class="form-control" placeholder="" rows="4" id="ket_tanggapan" name="ket_tanggapan"></textarea>
+								</label>
+							</section>
+						</div>
+
+						<div id="formuploadnya">
+							<div class="row">
+								<section class="col col-3">
+									<label > 
+										Upload File										
+									</label>
+								</section>
+								<section class="col col-9">
+									<label for="file" class="input input-file">
+										<div class="button">
+											<input type="file" id="upload_file" name="upload_file" onchange="this.parentNode.nextSibling.value = this.value">Browse</div><input id="namafileimages" type="text" >
+											<input type="hidden" name="namafileimage" id="namafileimage" value="">
+										</label>
+									</section>									
+								</div>
+
+								<div class="row">
+									<section class="col col-3">
+										<label > 
+											&nbsp;										
+										</label>
+									</section>
+									<section class="col col-9">
+										<div class="progress progress-md progress-striped active" id="progress">
+											<div class="progress-bar bg-color-blue"  id="bar"  role="progressbar" style="width: auto;"></div>
+										</div>
+									</section>									
+								</div>
+							</div>
+
+					</fieldset>
+					<footer>
+						<a onclick="simpan()" id="btnSewaAset" type="button" data-dismiss="modal" class="btn btn-primary">
+							Simpan
+						</a>
+						<button type="reset" class="btn btn-default" data-dismiss="modal">
+							Batal
+						</button>
+					</footer>
+				</form>
+			</div>
+
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
+</div>
+<!-- Modal Selesai -->
 
 <script type="text/javascript">	
 	pageSetUp();
@@ -315,23 +374,37 @@
 		$('#modal_detailbarang').modal('show');
 	}
 
-	function beritanggapan() {
-		$('#modal_beritanggapan').modal('show');
+	function proses() {
+		$('#modal_proses').modal('show');
 	}
 
-	$("#status_tanggapan").change(function() {
-		OptionTanggapan();
-	});
+	function selesai() {
+		$('#modal_selesai').modal('show');
+	}
 
-	function OptionTanggapan() {
-		var tanggapan = $("#status_tanggapan").select2("data").text;
-		tanggapan = tanggapan.toUpperCase();
+	function diterima(id) {
+		window.id = id;
+		window.cmd = "diterima";
+		$.SmartMessageBox({
+			title : "Konfirmasi",
+			content : "Apakah anda yakin akan Menerima Pengaduan ini?",
+			buttons : '[Tidak][Ya]'
+		}, function(ButtonPressed) {
+			if (ButtonPressed === "Ya") {
+				$.ajax({
+					url: '',
+					type: 'POST',
+					data: {id: id},
+					success: function  (respon) {
+						if (respon=='success') 
+							notifikasi("Sukses","Data berhasil diterima","success");
+						else
+							notifikasi("Gagal","Data gagal diterima","failed");
+					}
+				});
 
-		if( tanggapan== "SELESAI") {
-			$("#formuploadnya").show('400');
-		}  else {
-			$("#formuploadnya").hide('400');
-		}
+			}
+		});
 	}
 
 </script>

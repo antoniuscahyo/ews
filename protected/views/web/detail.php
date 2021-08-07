@@ -27,6 +27,7 @@
                         <div class="main-card mb-3 card">
                             <div class="card-body">
                                 <h5 class="card-title">Timeline Pengaduan</h5>
+                                <hr>
                                 <div class="vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
                                     <div class="vertical-timeline-item vertical-timeline-element">
                                         <div> <span class="vertical-timeline-element-icon bounce-in"> <i class="badge badge-dot badge-dot-xl badge-danger"> </i> </span>
@@ -68,6 +69,7 @@
                         <div class="main-card mb-3 card">
                             <div class="card-body">
                                 <h5 class="card-title">Tanggapan Petugas</h5>
+                                <hr>
                                 <img src="<?php echo Yii::app()->baseUrl; ?>/upload/aset/komputer.jpg">
                                 <br><br>
                                 <span style="font-style: italic;">PC yang bluescreen sudah selesai diperbaiki</span>
