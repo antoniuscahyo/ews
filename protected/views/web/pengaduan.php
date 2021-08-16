@@ -31,7 +31,7 @@ padding-bottom: 0px;">
 							<hr>
 							<h5>Detail Aset :</h5>
 							<div class="col col-md-12" style="text-align: center;">
-								<img src="<?php echo Yii::app()->baseUrl; ?>/upload/aset/komputer.jpg">
+								<img id="foto_aset" src="">
 							</div>
 							<br>
 							<div class="col col-md-12">
@@ -46,10 +46,11 @@ padding-bottom: 0px;">
 						<div id="isianaduan" class="col col-md-12" style="display: none;">
 							<h5>Form Aduan :</h5>
 							<input name="namapelapor" type="text" class="form-control" id="namapelapor" placeholder="Isikan Nama Pelapor">
-							<textarea name="message" class="form-control" id="message" cols="30" rows="10" placeholder="Isikan Keterangan Kondisi Barang"></textarea>
+							<textarea name="keteranganlapor" class="form-control" id="keteranganlapor" cols="30" rows="10" placeholder="Isikan Keterangan Kondisi Barang"></textarea>
+							<input type="hidden" name="id_inventaris" id="id_inventaris" value="">
 							<div class="form-group">
-								<label for="exampleFormControlFile1">Upload Foto Pendukung</label>
-								<input type="file" class="form-control" id="exampleFormControlFile1">
+								<label for="upload_file">Upload Foto Pendukung</label>
+								<input type="file" class="form-control" id="upload_file" name="upload_file" value="">
 							</div>
 
 							<button class="btn academy-btn mt-30" id="btnSubmitSaran" type="submit">Kirim Aduan</button>
@@ -69,8 +70,6 @@ padding-bottom: 0px;">
 	function cariAset() {
 		$("#hasilcari").prepend('<div align="center">'+LOADER+'');
 		$(".loader_img").fadeOut(2000);
-		$("#hasilcari").show();
-		$("#isianaduan").show();
 
 		$.ajax({
 			url: '<?= Yii::app()->getBaseUrl(1) ?>/web/cariaset',
@@ -80,14 +79,28 @@ padding-bottom: 0px;">
 				NomorAset: $("#NomorAset").val()
 			},
 			success:function (respon) {
-				$("#nama_barang").text(respon.nama_barang);
-				$("#spesifikasi").text(respon.spesifikasi);
-				$("#tahun_perolehan").text(respon.tahun_perolehan);
+				if (respon.id!=null) {
+					$("#hasilcari").show();
+					$("#isianaduan").show();
 
-				$("#body_pencarian").html(respon);
-				$("#body_pencarian").show();
-				$("#body_pencarian").prepend('<div align="center">'+LOADER+'');
-				$(".loader_img").fadeOut(2000);		
+					$("#id_inventaris").val(respon.id);
+					$("#nama_barang").text(respon.nama_barang);
+					$("#spesifikasi").text(respon.spesifikasi);
+					$("#tahun_perolehan").text(respon.tahun_perolehan);
+					$("#foto_aset").attr('src','<?php echo Yii::app()->baseUrl; ?>/upload/aset/'+respon.foto);
+
+					$("#body_pencarian").html(respon);
+					$("#body_pencarian").show();
+					$("#body_pencarian").prepend('<div align="center">'+LOADER+'');
+					$(".loader_img").fadeOut(2000);
+				} else {
+					Swal.fire(
+						'Data Tidak Ditemukan',
+						'Mohon Maaf, silahkan masukkan nomor aset dengan benar',
+						'error'
+					);
+				}
+						
 			}
 		});
 	}
@@ -95,12 +108,30 @@ padding-bottom: 0px;">
 	setTimeout(function() {
 		$(function(){
 			$("#form-saran").submit(function(){
+				var data = new FormData();
+
+				//Form data
+				var form_data = $('#form-saran').serializeArray();
+				$.each(form_data, function (key, input) {
+					data.append(input.name, input.value);
+				});
+
+				//File data
+				var file_data = $('input[name="upload_file"]')[0].files;
+				for (var i = 0; i < file_data.length; i++) {
+					data.append("upload_file[]", file_data[i]);
+				}
+
+				//Custom data
+				data.append('key', 'value');
+
 				$.ajax({
 					url:'<?= Yii::app()->getBaseUrl(1) ?>/web/kirimsaran',
-					data:$(this).serialize(),
+					// data:$(this).serialize(),
+					data:data,
 					type:$(this).attr("method"),
 					beforeSend: function() {
-						if ($('#name').val().trim().length<1 || $('#telp').val().trim().length<1 || $('#message').val().trim().length<1) {
+						if ($('#namapelapor').val().trim().length<1 || $('#keteranganlapor').val().trim().length<1) {
 							Swal.fire(
 								'Data Kosong',
 								'Mohon isikan data dengan lengkap!',
@@ -108,21 +139,23 @@ padding-bottom: 0px;">
 								);
 							return false;
 						}
-						$("textarea").attr("disabled",true);
-						$("input").attr("disabled",true);
+						$("keteranganlapor").attr("disabled",true);
+						$("namapelapor").attr("disabled",true);
 						$("#btnSubmitSaran").attr("disabled",true);
+						return false;
 					},
 					complete:function() {
-						$("textarea").attr("disabled",false);
-						$("input").attr("disabled",false);
-						$("#btnSubmitSaran").attr("disabled",false);								
+						$("namapelapor").attr("disabled",false);
+						$("keteranganlapor").attr("disabled",false);
+						$("#btnSubmitSaran").attr("disabled",false);
+						return false;
 					},
 					success:function(hasil) {
 						if (hasil=='success') {
-							Swal.fire(
-								'Data Berhasil Terkirim',
-								'Terima Kasih atas Saran dan Masukan anda',
-								'success'
+								Swal.fire(
+									'Data Berhasil Terkirim',
+									'Terima Kasih atas Saran dan Masukan anda',
+									'success'
 								).then(function(){
 									$("#form-saran")[0].reset();
 								});
@@ -131,7 +164,7 @@ padding-bottom: 0px;">
 									'Data Gagal Terkirim',
 									'Mohon Maaf, silahkan ulangi beberapa saat lagi',
 									'error'
-									);
+								);
 							}
 						}
 					})

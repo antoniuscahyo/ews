@@ -18,8 +18,6 @@ class WebController extends Controller
 	public $idmodul;
 	public $namamodul;
 
-	
-
 	public function actionIndex()
 	{	
 
@@ -120,12 +118,70 @@ class WebController extends Controller
 		$NomorAset = trim($_REQUEST['NomorAset']);
 		$DataInventaris = Tblinventaris::model()->find('tblinventaris_nomor=:nomor', array(':nomor'=>$NomorAset));
 		$ArrData = [
+			'id' => $DataInventaris->tblinventaris_id,
 			'nama_barang' => $DataInventaris->tblinventaris_namabarang,
 			'spesifikasi' => $DataInventaris->tblinventaris_spesifikasi,
 			'tahun_perolehan' => Reftahun::model()->findByPk($DataInventaris->reftahun_id)->reftahun_nama,
+			'foto' => $DataInventaris->tblinventaris_file,
 		];
 		// print_r($DataInventaris);die();
 		echo CJSON::encode($ArrData);
 		// echo json_encode($DataInventaris);
+	}
+
+	public function actionKirimSaran()
+	{
+		$folder = "upload/pengaduan";
+		$file = $_FILES['upload_file']['tmp_name']; 
+		$namafileimage = md5(microtime()).'_'.$_FILES['upload_file']['name'];
+		echo $namafileimage;die();
+		$target = dirname(Yii::app()->basePath) . '/'. $folder . '/' . $namafileimage;
+		
+		$allowed = array('jpg','jpeg','png','gif','bmp');
+		$pecah = explode('.', $_FILES['upload_file']['name']);
+		$getext = array_reverse($pecah);
+		$ext = $getext[0];
+
+		if(isset($_FILES["upload_file"]))
+		{
+			//Filter the file types , if you want.
+			if (in_array(strtolower($ext), $allowed)) {
+
+				if ($_FILES["upload_file"]["error"] > 0)
+				{
+				  echo "error ";
+				}
+				else
+				{
+					//move the uploaded file to uploads folder;
+			    	//move_uploaded_file($file,$target);
+
+
+					if (move_uploaded_file($file,$target)) {
+						echo $namafileimage;
+						chmod($target, 0777);
+					}
+					else {
+						echo "failed";
+					}
+			    	
+				}
+			}else{
+				echo "invalid_ext";
+			}	
+
+		}
+
+		$model = new Tblpengaduan;
+		$model->tblinventaris_id = trim($_POST['id_inventaris']);
+		$model->tblpengaduan_namapelapor = trim($_POST['namapelapor']);
+		$model->tblpengaduan_keterangan = trim($_POST['keteranganlapor']);
+		$model->tblpengaduan_tanggal = date('Y-m-d h:i:s');
+		$model->tblpengaduan_file = $file;
+		if($model->save()) {
+			echo "success";
+		} else {
+			echo "failed";
+		}
 	}
 }
