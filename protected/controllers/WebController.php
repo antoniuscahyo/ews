@@ -39,6 +39,7 @@ class WebController extends Controller
 		$pages->pageSize     = 5;
 		$pages->applyLimit($criteria);
 		$data['berita'] = WebKontent::model()->findAll($criteria);
+		// $data['pengaduan'] = Tblpengaduan::model()->findAll(); data pengaduan
 
 		$this->render('index', array('data'=>$data, 'pages'=>$pages));
 	}
@@ -113,5 +114,18 @@ class WebController extends Controller
 	{
 		$this->render('kritik_saran');
 	}
-
+	
+	public function actionCariAset()
+	{
+		$NomorAset = trim($_REQUEST['NomorAset']);
+		$DataInventaris = Tblinventaris::model()->find('tblinventaris_nomor=:nomor', array(':nomor'=>$NomorAset));
+		$ArrData = [
+			'nama_barang' => $DataInventaris->tblinventaris_namabarang,
+			'spesifikasi' => $DataInventaris->tblinventaris_spesifikasi,
+			'tahun_perolehan' => Reftahun::model()->findByPk($DataInventaris->reftahun_id)->reftahun_nama,
+		];
+		// print_r($DataInventaris);die();
+		echo CJSON::encode($ArrData);
+		// echo json_encode($DataInventaris);
+	}
 }

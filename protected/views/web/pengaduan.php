@@ -24,7 +24,7 @@ padding-bottom: 0px;">
 					<form id="form-saran" method="post" style="margin-bottom: 50px;">
 						<div class="col col-md-12">
 						<span>Contoh Nomor : (121/FST/2019)</span>
-						<input name="name" type="text" class="form-control" id="name" placeholder="Cari Aset (Masukkan Nomor Aset)">
+						<input name="NomorAset" type="text" class="form-control" id="NomorAset" placeholder="Cari Aset (Masukkan Nomor Aset)">
 							<a href="#" onclick="cariAset()" style="background-image: linear-gradient(to right, #1b61ad 0%, #17a2b8 51%, #1b61ad 100%);height: 50px;padding: 0 40px;line-height: 50px;min-width: 100px;float: right;margin-bottom: 0px;" class="btn academy-btn" id="btnCariAset">Cari</a>
 						</div>
 						<div id="hasilcari" class="col col-md-12" style="margin-top: 80px;display: none;">
@@ -35,16 +35,12 @@ padding-bottom: 0px;">
 							</div>
 							<br>
 							<div class="col col-md-12">
-									<span class="head">Nama Barang :</span><br><span class="isi">PC All In One Acer Aspire AIO</span>
-
-									<br>
-
-									<span class="head">Spesifikasi :</span><br><span class="isi"> Processor Intel Celeron J3060 Dual Core, Memori RAM 2 GB, Harddisk 500 GB</span>
-
-									<br>
-
-									<span class="head">Tahun Perolehan :</span><br><span class="isi"> 2019</span>
-								</div>
+								<span class="head">Nama Barang :</span><br><span class="isi"><label id="nama_barang"></label></span>
+								<br>
+								<span class="head">Spesifikasi :</span><br><span class="isi"><label id="spesifikasi"></label></span>
+								<br>
+								<span class="head">Tahun Perolehan :</span><br><span class="isi"><label id="tahun_perolehan"></label></span>
+							</div>
 							<hr>	
 						</div>
 						<div id="isianaduan" class="col col-md-12" style="display: none;">
@@ -72,9 +68,28 @@ padding-bottom: 0px;">
 
 	function cariAset() {
 		$("#hasilcari").prepend('<div align="center">'+LOADER+'');
-		$(".loader_img").fadeOut(2000);	
+		$(".loader_img").fadeOut(2000);
 		$("#hasilcari").show();
 		$("#isianaduan").show();
+
+		$.ajax({
+			url: '<?= Yii::app()->getBaseUrl(1) ?>/web/cariaset',
+			type: 'POST',
+			dataType: 'json',
+			data :{
+				NomorAset: $("#NomorAset").val()
+			},
+			success:function (respon) {
+				$("#nama_barang").text(respon.nama_barang);
+				$("#spesifikasi").text(respon.spesifikasi);
+				$("#tahun_perolehan").text(respon.tahun_perolehan);
+
+				$("#body_pencarian").html(respon);
+				$("#body_pencarian").show();
+				$("#body_pencarian").prepend('<div align="center">'+LOADER+'');
+				$(".loader_img").fadeOut(2000);		
+			}
+		});
 	}
 
 	setTimeout(function() {
